@@ -2,8 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const { ethers } = require('ethers');
 const { abi } = require(process.env.ABI_PATH);
+const cors = require('cors');
 
 const app = express();
+app.use(cors())
 const port = 3000;
 
 // Initialize provider and wallet
@@ -56,37 +58,47 @@ app.get('/voter/:address', async (req, res) => {
 
 // Cast Vote
 app.post('/vote', async (req, res) => {
-    try {
-        const { candidateId, privateKey } = req.body;
+  try {
+      const { candidateId } = req.body;
 
-        if (!privateKey) {
-            return res.status(400).json({ message: "Private key is required to cast a vote." });
-        }
+      if (!candidateId) {
+          return res.status(400).json({ message: "Candidate ID is required." });
+      }
 
-        // Create wallet from voter's private key
-        const voterWallet = new ethers.Wallet(privateKey, provider);
-        const voterAddress = await voterWallet.getAddress();
+      // Dynamically create a temporary wallet
+      const tempWallet = ethers.Wallet.createRandom();
+      const tempWalletWithProvider = tempWallet.connect(provider);
 
-        // Check if the user has already voted
-        const voter = await contract.getVoter(voterAddress);
-        if (voter.hasVoted) {
-            return res.status(400).json({ message: "You have already voted." });
-        }
+      console.log(`Temp Wallet Address: ${tempWallet.address}`);
+      console.log(`Temp Private Key: ${tempWallet.privateKey}`);
 
-        // Connect the voter wallet to the contract
-        const contractWithSigner = contract.connect(voterWallet);
-        const tx = await contractWithSigner.vote(candidateId);
-        await tx.wait();
+      // Estimate gas and fund the temporary wallet
+      const gasLimit = 100000; // Adjust based on your contract's requirements
+      const fundingAmount = 1000000000000000;
 
-        res.json({
-            message: `Vote successfully cast for candidate ${candidateId}`,
-            txHash: tx.hash,
-        });
-    } catch (error) {
-        console.error("Error casting vote:", error);
-        res.status(500).json({ message: "Error casting vote" });
-    }
+      const tx = await adminWallet.sendTransaction({
+          to: tempWallet.address,
+          value: fundingAmount,
+      });
+      await tx.wait();
+
+      console.log(`Funded Temp Wallet: ${fundingAmount.toString()} wei`);
+
+      // Connect the temporary wallet to the contract and cast the vote
+      const contractWithSigner = contract.connect(tempWalletWithProvider);
+      const voteTx = await contractWithSigner.vote(candidateId);
+      await voteTx.wait();
+
+      res.json({
+          message: `Vote successfully cast for candidate ${candidateId}`,
+          txHash: voteTx.hash,
+      });
+  } catch (error) {
+      console.error("Error casting vote:", error);
+      res.status(500).json({ message: "Error casting vote" });
+  }
 });
+
 
 // Get Candidate by ID
 app.get('/candidate/:id', async (req, res) => {
