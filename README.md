@@ -35,8 +35,10 @@ Switch to the `solidity` branch and follow these steps:
    ```
 
 2. **Install Ganache**:
-   - [Download Ganache](https://trufflesuite.com/ganache/).
-   - Start a new workspace in Ganache.
+   ```bash
+    npm install -g ganache
+    ganache
+   ```
 
 3. **Navigate to the Solidity branch**:
    ```bash
@@ -45,22 +47,22 @@ Switch to the `solidity` branch and follow these steps:
 
 4. **Install dependencies**:
    ```bash
-   $ npm install
+    npm install
    ```
 
 5. **Compile the smart contracts**:
    ```bash
-   $ truffle compile
+    truffle compile
    ```
 
 6. **Migrate the contracts** to the Ganache blockchain:
    ```bash
-   $ truffle migrate
+    truffle migrate
    ```
 
 7. **Test the contracts** (optional):
    ```bash
-   $ truffle test
+    truffle test
    ```
 
 ### Setting Up the Backend
@@ -68,12 +70,12 @@ Switch to the `nodejs` branch and follow these steps:
 
 1. **Navigate to the Node.js branch**:
    ```bash
-   $ git checkout nodejs
+    git checkout nodejs
    ```
 
 2. **Install dependencies**:
    ```bash
-   $ npm install
+    npm install
    ```
 
 3. **Create a `.env` file** and add the required environment variables (example):
@@ -87,7 +89,7 @@ Switch to the `nodejs` branch and follow these steps:
 
 4. **Start the backend server**:
    ```bash
-   $ npm start
+    npx nodemon app
    ```
 
 ### Setting Up the Frontend
@@ -98,17 +100,17 @@ Switch to the `flutter_app` branch and follow these steps:
 
 2. **Navigate to the Flutter branch**:
    ```bash
-   $ git checkout flutter_app
+    git checkout flutter_app
    ```
 
 3. **Install dependencies**:
    ```bash
-   $ flutter pub get
+    flutter pub get
    ```
 
 4. **Run the Flutter app**:
    ```bash
-   $ flutter run
+    flutter run
    ```
 
 ## Project Structure
@@ -140,4 +142,4 @@ Provides the user interface for voters. Users can vote and view results directly
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or collaboration, reach out to Germain Syncher at [email@example.com](mailto:email@example.com).
+For any questions or collaboration, reach out to Germain Syncher at [germainconnected@gmail.com](mailto:germainconnected@gmail.com).
